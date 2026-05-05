@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>番茄钟专注工具</title>
+    <!-- Google Fonts: Inter 字体 + Material Symbols 图标 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <!-- ====== 主容器 ====== -->
+    <div class="app-container">
+
+        <!-- ---- 头部：标题 + 设置按钮 ---- -->
+        <div class="header">
+            <div class="header-title">
+                <span class="material-symbols-outlined">timer</span>
+                番茄钟
+            </div>
+            <button class="settings-btn" onclick="toggleSettings()">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+        </div>
+
+        <!-- ---- 防熄屏开关 ---- -->
+        <div class="screen-awake-bar">
+            <span class="screen-awake-label">
+                <span class="material-symbols-outlined" id="screenAwakeIcon">screen_lock_rotation</span>
+                防止电脑熄屏
+            </span>
+            <label class="switch">
+                <input type="checkbox" id="screenAwakeToggle" onchange="toggleScreenAwake(this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- ---- 模式选项卡 ---- -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" data-mode="work" onclick="switchMode('work')">专注</button>
+            <button class="mode-tab" data-mode="shortBreak" onclick="switchMode('shortBreak')">短休息</button>
+            <button class="mode-tab" data-mode="longBreak" onclick="switchMode('longBreak')">长休息</button>
+        </div>
+
+        <!-- ---- 计时器区域：SVG 环形进度条 + 时间显示 ---- -->
+        <div class="timer-section">
+            <div class="timer-ring-container">
+                <svg class="timer-ring" width="280" height="280" viewBox="0 0 280 280">
+                    <!-- 背景圆环 -->
+                    <circle class="timer-ring-bg" cx="140" cy="140" r="130" />
+                    <!-- 进度圆环，stroke-dasharray=2π×130≈816.81 -->
+                    <circle class="timer-ring-progress" id="timerProgress" cx="140" cy="140" r="130"
+                        stroke-dasharray="816.81" stroke-dashoffset="0" />
+                </svg>
+                <div class="timer-content">
+                    <div class="time-display" id="timeDisplay">25:00</div>
+                    <div class="timer-status" id="timerStatus">准备就绪</div>
+                </div>
+            </div>
+
+            <!-- ---- 番茄圆点（4 个点表示周期进度） ---- -->
+            <div class="pomodoro-dots" id="pomodoroDots">
+                <div class="pomodoro-dot"></div>
+                <div class="pomodoro-dot"></div>
+                <div class="pomodoro-dot"></div>
+                <div class="pomodoro-dot"></div>
+            </div>
+            <div class="pomodoro-count" id="pomodoroCount">0 / 4 个番茄</div>
+        </div>
+
+        <!-- ---- 控制按钮组 ---- -->
+        <div class="controls">
+            <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()">
+                <span class="material-symbols-outlined" id="startIcon">play_arrow</span>
+                <span id="startText">开始</span>
+            </button>
+            <button class="btn btn-secondary" onclick="resetTimer()">
+                <span class="material-symbols-outlined">refresh</span>
+                重置
+            </button>
+            <button class="btn btn-secondary" onclick="skipTimer()">
+                <span class="material-symbols-outlined">skip_next</span>
+                跳过
+            </button>
+        </div>
+
+        <!-- ---- 设置面板（折叠） ---- -->
+        <div class="settings-panel" id="settingsPanel">
+            <div class="settings-content">
+                <div class="settings-card">
+                    <!-- 时长设置 -->
+                    <div class="setting-section-label">时长设置</div>
+                    <div class="setting-row">
+                        <span class="setting-label">专注时长（分钟）</span>
+                        <input type="number" class="setting-input" id="workDuration" value="25" min="1" max="60">
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">短休息（分钟）</span>
+                        <input type="number" class="setting-input" id="shortBreak" value="5" min="1" max="30">
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">长休息（分钟）</span>
+                        <input type="number" class="setting-input" id="longBreak" value="15" min="1" max="60">
+                    </div>
+
+                    <!-- 运行模式 -->
+                    <div class="setting-section-label">运行模式</div>
+                    <div class="auto-mode-row">
+                        <span class="setting-label">自动模式（连续执行）</span>
+                        <label class="switch">
+                            <input type="checkbox" id="autoModeToggle" onchange="toggleAutoMode(this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-row" id="cycleSettingRow">
+                        <span class="setting-label">循环次数</span>
+                        <div class="custom-dropdown" id="cycleDropdown">
+                            <div class="custom-dropdown-trigger" id="cycleDropdownTrigger"
+                                onclick="toggleCycleDropdown()">
+                                <span id="cycleDropdownLabel">无限循环</span>
+                                <span class="material-symbols-outlined arrow">expand_more</span>
+                            </div>
+                            <div class="custom-dropdown-menu" id="cycleDropdownMenu">
+                                <div class="custom-dropdown-item selected" data-value="0" onclick="selectCycle(0)">无限循环</div>
+                                <div class="custom-dropdown-item" data-value="1" onclick="selectCycle(1)">1 个循环</div>
+                                <div class="custom-dropdown-item" data-value="2" onclick="selectCycle(2)">2 个循环</div>
+                                <div class="custom-dropdown-item" data-value="3" onclick="selectCycle(3)">3 个循环</div>
+                                <div class="custom-dropdown-item" data-value="4" onclick="selectCycle(4)">4 个循环</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 16px;">
+                        <button class="btn btn-primary" onclick="applySettings()">应用设置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ---- 状态栏 ---- -->
+        <div class="status-bar" id="statusBar">就绪</div>
+    </div>
+
+    <!-- ====== Toast 提示（底部居中弹出） ====== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ====== 完成弹窗（遮罩 + 卡片） ====== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card">
+            <div class="modal-icon" id="modalIcon">
+                <span class="material-symbols-outlined" id="modalIconSymbol">check_circle</span>
+            </div>
+            <div class="modal-title" id="modalTitle">太棒了！</div>
+            <div class="modal-message" id="modalMessage">你已完成一个番茄钟</div>
+            <button class="modal-btn" onclick="closeModal()">好的</button>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>

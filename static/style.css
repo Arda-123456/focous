@@ -1,0 +1,682 @@
+/* ============================================================
+   focous 番茄钟 — 全局样式
+   基于 Material Design 3 设计令牌体系的暗色/亮色主题
+   布局：居中卡片式 (max-width 480px)，移动端自适应
+   ============================================================ */
+
+/* ---- Material Design 3 设计令牌 ---- */
+:root {
+    --md-primary: #4285F4;
+    --md-primary-light: #669DF6;
+    --md-primary-dark: #3367D6;
+    --md-primary-container: #D2E3FC;
+    --md-on-primary: #FFFFFF;
+    --md-on-primary-container: #001D3D;
+    --md-secondary: #5E5E5E;
+    --md-secondary-container: #E8E8E8;
+    --md-success: #34A853;
+    --md-success-container: #C4F5C6;
+    --md-warning: #FBBC04;
+    --md-warning-container: #FFF3CD;
+    --md-background: #F8FAFC;
+    --md-surface: #FFFFFF;
+    --md-surface-variant: #F1F5F9;
+    --md-on-surface: #1E293B;
+    --md-on-surface-medium: #64748B;
+    --md-on-surface-light: #CBD5E1;
+    --md-divider: #E2E8F0;
+    --md-outline: #E2E8F0;
+    --md-elevation-1: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --md-elevation-2: 0 3px 6px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --md-elevation-3: 0 10px 20px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.06);
+    --md-shape-corner-xs: 4px;
+    --md-shape-corner-s: 8px;
+    --md-shape-corner-m: 16px;
+    --md-shape-corner-l: 28px;
+    --md-shape-corner-xl: 32px;
+}
+
+/* ---- 全局重置 ---- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--md-background);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: var(--md-on-surface);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- 主卡片容器 ---- */
+.app-container {
+    background: var(--md-surface);
+    border-radius: var(--md-shape-corner-l);
+    box-shadow: var(--md-elevation-3);
+    max-width: 480px;
+    width: 100%;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;          /* Firefox 隐藏滚动条 */
+}
+
+.app-container::-webkit-scrollbar {
+    display: none;                  /* Chrome/Safari 隐藏滚动条 */
+}
+
+/* ---- 头部 ---- */
+.header {
+    padding: 20px 24px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--md-on-surface);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-title .material-symbols-outlined {
+    color: var(--md-primary);
+    font-size: 24px;
+}
+
+.settings-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    color: var(--md-on-surface-medium);
+}
+
+.settings-btn:hover {
+    background: var(--md-surface-variant);
+}
+
+.settings-btn .material-symbols-outlined {
+    font-size: 24px;
+    display: block;
+}
+
+/* ---- 防熄屏开关栏 ---- */
+.screen-awake-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    margin: 16px 24px 0;
+    height: 48px;
+    background: var(--md-surface);
+    border: 1px solid var(--md-divider);
+    border-radius: var(--md-shape-corner-s);
+}
+
+.screen-awake-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--md-on-surface);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.screen-awake-label .material-symbols-outlined {
+    font-size: 20px;
+    color: var(--md-on-surface-medium);
+}
+
+.screen-awake-label .material-symbols-outlined.active {
+    color: var(--md-primary);
+}
+
+/* ---- Material 风格开关 ---- */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 32px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--md-on-surface-light);
+    transition: 0.3s;
+    border-radius: 32px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 24px;
+    width: 24px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input:checked+.slider {
+    background-color: var(--md-primary);
+}
+
+input:checked+.slider:before {
+    transform: translateX(20px);
+}
+
+/* ---- 模式选项卡 ---- */
+.mode-tabs {
+    display: flex;
+    padding: 16px 24px;
+    gap: 4px;
+}
+
+.mode-tab {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 100px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    color: var(--md-on-surface-medium);
+}
+
+.mode-tab:hover {
+    background: var(--md-surface-variant);
+}
+
+.mode-tab.active {
+    background: var(--md-primary);
+    color: var(--md-on-primary);
+}
+
+/* ---- 计时器区域 ---- */
+.timer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+}
+
+/* SVG 环形进度条容器 */
+.timer-ring-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+}
+
+.timer-ring {
+    transform: rotate(-90deg);        /* 从顶部 12 点方向开始 */
+}
+
+.timer-ring-bg {
+    fill: none;
+    stroke: #EEEEEE;
+    stroke-width: 8;
+}
+
+.timer-ring-progress {
+    fill: none;
+    stroke: var(--md-primary);
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.timer-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.time-display {
+    font-size: 72px;
+    font-weight: 300;
+    color: var(--md-on-surface);
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.timer-status {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--md-on-surface-medium);
+}
+
+/* ---- 番茄圆点 ---- */
+.pomodoro-dots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.pomodoro-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--md-divider);
+    transition: all 0.3s;
+}
+
+.pomodoro-dot.filled {
+    background: var(--md-primary);
+    border-color: var(--md-primary);
+}
+
+.pomodoro-count {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--md-on-surface-medium);
+}
+
+/* ---- 完成弹窗 ---- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-card {
+    background: var(--md-surface);
+    border-radius: var(--md-shape-corner-l);
+    box-shadow: var(--md-elevation-3);
+    padding: 32px;
+    max-width: 380px;
+    width: 90%;
+    text-align: center;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.show .modal-card {
+    transform: scale(1) translateY(0);
+}
+
+.modal-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.modal-icon.work {
+    background: var(--md-success-container);
+}
+
+.modal-icon.break {
+    background: var(--md-primary-container);
+}
+
+.modal-icon .material-symbols-outlined {
+    font-size: 36px;
+}
+
+.modal-icon.work .material-symbols-outlined {
+    color: var(--md-success);
+}
+
+.modal-icon.break .material-symbols-outlined {
+    color: var(--md-primary);
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--md-on-surface);
+    margin-bottom: 8px;
+}
+
+.modal-message {
+    font-size: 14px;
+    color: var(--md-on-surface-medium);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.modal-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: var(--md-shape-corner-s);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--md-primary);
+    color: var(--md-on-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+}
+
+.modal-btn:hover {
+    background: var(--md-primary-dark);
+}
+
+/* ---- 控制按钮组 ---- */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 24px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border: none;
+    border-radius: var(--md-shape-corner-s);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: var(--md-primary);
+    color: var(--md-on-primary);
+    min-width: 140px;
+}
+
+.btn-primary:hover {
+    background: var(--md-primary-dark);
+    box-shadow: var(--md-elevation-1);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--md-on-surface-medium);
+    border: 1px solid var(--md-divider);
+}
+
+.btn-secondary:hover {
+    background: var(--md-surface-variant);
+}
+
+.btn .material-symbols-outlined {
+    font-size: 20px;
+}
+
+/* ---- 设置面板（折叠展开） ---- */
+.settings-panel>div {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.35s ease;
+}
+
+.settings-panel.open>div {
+    max-height: 600px;
+}
+
+.settings-content {
+    padding: 0 24px;
+}
+
+.settings-card {
+    background: var(--md-surface-variant);
+    border-radius: var(--md-shape-corner-m);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.setting-section-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--md-on-surface-medium);
+    margin-bottom: 12px;
+    margin-top: 16px;
+}
+
+.setting-section-label:first-child {
+    margin-top: 0;
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+}
+
+.setting-row:not(:last-child) {
+    border-bottom: 1px solid var(--md-divider);
+}
+
+.setting-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--md-on-surface);
+}
+
+.setting-input {
+    width: 60px;
+    padding: 8px 12px;
+    border: 1px solid var(--md-outline);
+    border-radius: var(--md-shape-corner-xs);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    background: var(--md-surface);
+    color: var(--md-on-surface);
+    transition: border-color 0.2s;
+}
+
+.setting-input:focus {
+    outline: none;
+    border-color: var(--md-primary);
+    box-shadow: 0 0 0 2px var(--md-primary-container);
+}
+
+/* 自动模式行 与 设置行样式一致 */
+.auto-mode-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--md-divider);
+}
+
+/* ---- 循环次数下拉菜单 ---- */
+.custom-dropdown {
+    position: relative;
+    width: 100px;
+}
+
+.custom-dropdown-trigger {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 100px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    background: var(--md-surface-variant);
+    color: var(--md-on-surface);
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    user-select: none;
+}
+
+.custom-dropdown-trigger:hover {
+    background-color: #E2E8F0;
+}
+
+.custom-dropdown-trigger .arrow {
+    font-size: 16px;
+    transition: transform 0.2s;
+}
+
+.custom-dropdown-trigger.open .arrow {
+    transform: rotate(180deg);
+}
+
+.custom-dropdown-menu {
+    position: fixed;
+    background: var(--md-surface);
+    border-radius: 12px;
+    box-shadow: var(--md-elevation-3);
+    padding: 4px;
+    min-width: 100px;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-8px);
+    transition: all 0.2s;
+}
+
+.custom-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.custom-dropdown-item {
+    padding: 8px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    color: var(--md-on-surface);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+
+.custom-dropdown-item:hover {
+    background: var(--md-surface-variant);
+}
+
+.custom-dropdown-item.selected {
+    color: var(--md-primary);
+    font-weight: 500;
+}
+
+/* ---- 状态栏 ---- */
+.status-bar {
+    text-align: center;
+    padding: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--md-on-surface-medium);
+    background: var(--md-surface-variant);
+}
+
+/* ---- 进度环呼吸动画 ---- */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.7; }
+}
+
+.timer-ring-progress.running {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* ---- Toast 提示 ---- */
+.toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--md-on-surface);
+    color: var(--md-surface);
+    padding: 14px 24px;
+    border-radius: var(--md-shape-corner-s);
+    box-shadow: var(--md-elevation-3);
+    font-size: 14px;
+    font-weight: 500;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ---- 移动端响应式 ---- */
+@media (max-width: 480px) {
+    body {
+        height: 100dvh;
+    }
+
+    .app-container {
+        border-radius: 0;
+        max-height: calc(100dvh - 40px);
+    }
+
+    .time-display {
+        font-size: 64px;
+    }
+}
